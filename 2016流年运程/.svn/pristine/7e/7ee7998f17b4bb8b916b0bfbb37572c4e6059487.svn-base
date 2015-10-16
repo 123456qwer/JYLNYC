@@ -1,0 +1,478 @@
+//
+//  LiuNianView.m
+//  LiuNianYunCheng
+//
+//  Created by 吴冬 on 15/7/30.
+//  Copyright (c) 2015年 玄机天地. All rights reserved.
+//
+
+#import "LiuNianView.h"
+#import "sys/sysctl.h"
+
+
+
+#define kCountViewWidth (self.width - 15 * 3) / 2
+#define kTagForGong 350
+#define kTagForLabel 450
+#define kTagForDaxian 550
+#define kTagForChangsheng 650
+#define kTagForBoshi 750
+#define kTagForShengxiao 850
+#define kTagForXiaoxian 950
+#define kTagForFirst 1050
+#define kTagForMiddleG 1150
+
+//宫视图的Frame
+#define widthForGong 313 / 750.0 * kScreenWidth
+#define heightForGong 482 / 1334.0 * kScreenHeight
+#define yForGong 20 / 1334.0 * kScreenHeight
+#define pageForGong 21 / 750.0 * kScreenWidth
+
+//星的frame
+#define xForStar 17 / 750.0 * kScreenWidth
+#define yForStar 34 / 1334.0 * kScreenHeight
+#define pageForStar 23 / 750.0 * kScreenWidth
+#define widthForStar 38 / 750.0 * kScreenWidth
+#define heightForStar 141 / 1334.0 * kScreenHeight
+
+//小限宫的Frame
+#define xForSmallGong 79 / 750.0 * kScreenWidth
+#define yForSmallGong 305 / 1334.0 * kScreenHeight
+#define widthForSmallGong 155 / 750.0 * kScreenWidth
+#define heightForSmallGong 50 / 1334.0 * kScreenHeight
+
+//宫的Frame
+#define yMiddleForGong 13 / 1334.0 * kScreenHeight
+#define xForGong 100 / 750.0 * kScreenWidth
+#define widthForMiddleGong 115 / 750.0 * kScreenWidth
+#define heightForMiddleGong 54 / 1334.0 * kScreenHeight
+
+//大限Frame
+#define xForDaxian ((313 - 105) / 2.0) / 750.0 * kScreenWidth
+#define widthForDaxian 105 / 750.0 * kScreenWidth
+#define heightForDaxian 35 / 1334.0 * kScreenHeight
+
+//博士
+#define xForBoshi 17 / 750.0 * kScreenWidth
+#define yForBoshi 372 / 1334.0 * kScreenHeight
+#define widthForBoshi 37 / 750.0 * kScreenWidth
+#define heightForBoshi 100 / 1334.0 * kScreenHeight
+
+//浅色的巧克力色
+#define colorForQian [UIColor colorWithRed:151 / 255.0  green:130 / 255.0 blue:127 / 255.0 alpha:1.000]
+
+
+@implementation LiuNianView
+{
+   
+    NSDictionary *dicForAllGong;
+    NSMutableArray *_arrForLabelAllStar;
+    
+    UIFont *_daxianFont;
+    UIFont *_gongFont;
+    UIFont *_otherFont;
+
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame
+            andAllGongAndStar:(NSMutableDictionary *)dic
+                  andArrForZM:(NSMutableArray *)arrforzm
+{
+   
+    if (self = [super initWithFrame:frame]) {
+        
+        _dicForAllStarandG = dic;
+        _arrForLabelAllStar = [NSMutableArray array];
+        _arrForZM = arrforzm;
+        
+        //字典，为了取出一对宫
+        dicForAllGong = @{@"命宫":@[@"命宫",@"迁移"],@"兄弟":@[@"兄弟",@"交友"],@"财帛":@[@"财帛",@"福德"],@"事业":@[@"事业",@"夫妻"],@"疾厄":@[@"疾厄",@"父母"],@"子女":@[@"子女",@"田宅"]};
+        
+        //创建font
+        [self createFont];
+        
+        //创建view
+        [self createView];
+        
+    }
+
+    return self;
+}
+
+- (void)createFont
+{
+   
+    //字体大小
+    
+    // 4 - > 9  5 - > 10  6 - > 12
+    NSString *str =  [self getCurrentDeviceModel];
+    
+   
+    
+    if ([str isEqualToString:@"iPhone 4"] || [str isEqualToString:@"iPhone 4S"]) {
+        
+   
+        _otherFont = [UIFont systemFontOfSize:14];
+        _daxianFont = [UIFont systemFontOfSize:11];
+        _gongFont = [UIFont boldSystemFontOfSize:16];
+        
+    }else if([str isEqualToString:@"iPhone 5"] || [str isEqualToString:@"iPhone 5c"] || [str isEqualToString:@"iPhone 5s"]){
+        
+        _otherFont = [UIFont systemFontOfSize:16];
+        _daxianFont = [UIFont systemFontOfSize:11];
+        _gongFont = [UIFont boldSystemFontOfSize:16];
+        
+    }else if([str isEqualToString:@"iPhone 6"]){
+        
+        _otherFont = [UIFont systemFontOfSize:19];
+        _daxianFont = [UIFont systemFontOfSize:13];
+        _gongFont = [UIFont boldSystemFontOfSize:19];
+        
+    }else if([str isEqualToString:@"iPhone 6 Plus"]){
+        
+        _otherFont = [UIFont systemFontOfSize:21];
+        _daxianFont = [UIFont systemFontOfSize:15];
+        _gongFont = [UIFont boldSystemFontOfSize:21];
+        
+    }else{
+        
+        _otherFont = [UIFont systemFontOfSize:19];
+        _daxianFont = [UIFont systemFontOfSize:13];
+        _gongFont = [UIFont boldSystemFontOfSize:19];
+        
+    }
+    
+    
+
+
+}
+
+/**
+ *  创建View
+ */
+- (void)createView
+{
+    
+    for (int i = 0; i < 2; i++) {
+        
+        
+        UIView *viewForText = [[UIView alloc]initWithFrame:CGRectMake(i * (widthForGong + pageForGong),yForGong , widthForGong, heightForGong)];
+        viewForText.tag = kTagForGong + i;
+        viewForText.backgroundColor = [UIColor colorWithRed:252 / 255.0 green:249 / 255.0 blue:244 / 255.0 alpha:1];
+        [self addSubview:viewForText];
+        
+//        UILabel *labelForFirst = [[UILabel alloc]initWithFrame:CGRectMake(0, viewForText.height + 20, viewForText.width, 20)];
+//        labelForFirst.tag = kTagForFirst +i ;
+//        [viewForText addSubview:labelForFirst];
+//        labelForFirst.text = _arrForZM[i];
+        
+        
+        
+        //命宫
+
+        NSArray *arr = dicForAllGong[@"命宫"];
+        
+        NSString *strForGong = arr[i];
+        
+        NSArray *arrForSiGong1 = _dicForAllStarandG[strForGong];
+        
+        NSDictionary *dicForStar = arrForSiGong1[0];
+        NSDictionary *dicForDaxian = arrForSiGong1[1];
+     //   NSDictionary *dicForChangsheng = arrForSiGong1[2];
+        NSDictionary *dicForBoshi = arrForSiGong1[3];
+        NSDictionary *dicForShengxiao = arrForSiGong1[4];
+     //   NSDictionary *dicForXiaoxian = arrForSiGong1[5];
+        NSDictionary *dicForTianpanGong = arrForSiGong1[6];
+
+        //小限
+//        UILabel *labelForXiaoxian = [[UILabel alloc]initWithFrame:CGRectMake(0, viewForText.height, viewForText.width, 20)];
+//        labelForXiaoxian.numberOfLines = 0;
+//        labelForXiaoxian.font = [UIFont boldSystemFontOfSize:8];
+//        labelForXiaoxian.tag = kTagForXiaoxian + i;
+//        labelForXiaoxian.text = dicForXiaoxian[@"小限"];
+//        [viewForText addSubview:labelForXiaoxian];
+        
+//        //长生
+//        UILabel *labelForChangsheng = [[UILabel alloc]initWithFrame:CGRectMake(40, viewForText.height - 20, 30, 20)];
+//        labelForChangsheng.numberOfLines = 0;
+//        labelForChangsheng.font = [UIFont systemFontOfSize:11];
+//        labelForChangsheng.tag = kTagForChangsheng + i;
+//        labelForChangsheng.text = dicForChangsheng[@"长生"];
+//        [viewForText addSubview:labelForChangsheng];
+        
+        //博士
+        UILabel *labelForBoshi = [[UILabel alloc]initWithFrame:CGRectMake(xForBoshi,yForBoshi, widthForBoshi, heightForBoshi)];
+        labelForBoshi.numberOfLines = 0;
+        labelForBoshi.font = _otherFont;
+        labelForBoshi.textAlignment = NSTextAlignmentCenter;
+        labelForBoshi.tag = kTagForBoshi + i;
+        labelForBoshi.textColor = colorForQian;
+       // labelForBoshi.backgroundColor = [UIColor orangeColor];
+        labelForBoshi.text = dicForBoshi[@"博士"];
+        [viewForText addSubview:labelForBoshi];
+        
+        //生肖
+        UILabel *labelForShengxiao = [[UILabel alloc]initWithFrame:CGRectMake(widthForGong - xForBoshi - widthForBoshi, yForBoshi, widthForBoshi, heightForBoshi)];
+        labelForShengxiao.numberOfLines = 0;
+        labelForShengxiao.font = _otherFont;
+        labelForShengxiao.tag = kTagForShengxiao + i;
+        labelForShengxiao.text = dicForShengxiao[@"生肖"];
+        labelForShengxiao.textColor = colorForQian;
+        [viewForText addSubview:labelForShengxiao];
+        
+        NSArray *arrForStar = dicForStar[@"星"];
+        
+        //星
+        for (int i = 0; i < arrForStar.count; i++) {
+            
+            if (i > 4) {
+                
+                
+            }else{
+                
+                UILabel *labelForStar = [[UILabel alloc]initWithFrame:CGRectMake(widthForGong - xForStar - widthForStar - i * (widthForStar + pageForStar), yForStar, widthForStar, heightForStar)];
+                labelForStar.attributedText = arrForStar[i];
+                //labelForStar.textColor = [UIColor blackColor];
+                labelForStar.numberOfLines = 0;
+              //  labelForStar.backgroundColor = [UIColor orangeColor];
+                labelForStar.font = _otherFont;
+                [viewForText addSubview:labelForStar];
+                
+                [_arrForLabelAllStar addObject:labelForStar];
+                
+            }
+            
+            
+            
+        }
+        
+
+       
+        //宫，小限的宫
+        UILabel *labelForGong = [[UILabel alloc]initWithFrame:CGRectMake(xForSmallGong, yForSmallGong, widthForSmallGong, heightForSmallGong)];
+        NSArray *arrForSiGong = dicForAllGong[@"命宫"];
+        labelForGong.tag = kTagForLabel + i;
+        labelForGong.textAlignment = NSTextAlignmentCenter;
+        //labelForGong.backgroundColor = [UIColor orangeColor];
+        labelForGong.font = _gongFont;
+        labelForGong.text = [NSString stringWithFormat:@"小限%@",arrForSiGong[i]];
+        [viewForText addSubview:labelForGong];
+
+        
+        
+        //中间命盘宫
+        //Key就是当前小限宫名
+        UILabel *labelForMiddleGong = [[UILabel alloc]initWithFrame:CGRectMake(xForGong, labelForGong.bottom + yMiddleForGong, widthForMiddleGong, heightForMiddleGong)];
+        labelForMiddleGong.backgroundColor = colorForAll;
+        labelForMiddleGong.tag = kTagForMiddleG + i;
+        labelForMiddleGong.textAlignment = NSTextAlignmentCenter;
+        labelForMiddleGong.textColor = [UIColor whiteColor];
+        labelForMiddleGong.text = dicForTianpanGong[arrForSiGong[i]];
+        labelForMiddleGong.font = _gongFont;
+        labelForMiddleGong.layer.cornerRadius = 8.0;
+        labelForMiddleGong.layer.masksToBounds = YES;
+        [viewForText addSubview:labelForMiddleGong];
+        
+        //大限
+        UILabel *labelForDaxian = [[UILabel alloc]initWithFrame:CGRectMake(xForDaxian, labelForMiddleGong.bottom + 5, widthForDaxian, heightForDaxian)];
+        //labelForDaxian.numberOfLines = 0;
+        labelForDaxian.font = _daxianFont;
+        labelForDaxian.tag = kTagForDaxian + i;
+       // labelForDaxian.backgroundColor = [UIColor orangeColor];
+        labelForDaxian.text = dicForDaxian[@"大限"];
+        labelForDaxian.textAlignment = NSTextAlignmentCenter;
+        [viewForText addSubview:labelForDaxian];
+        
+        
+    }
+
+}
+
+//代理方法
+- (void)actionForStar:(NSString *)strForGong andNumber:(NSInteger)number
+{
+   
+    NSString *strForSma = strForGong;
+    
+    for (int i = 0; i < _arrForLabelAllStar.count; i++) {
+        
+        [_arrForLabelAllStar[i] removeFromSuperview];
+        
+    }
+    
+    for (int i = 0; i < _arrForLabelAllStar.count; i++) {
+        
+        [_arrForLabelAllStar removeObjectAtIndex:i];
+        
+    }
+    
+    
+    //代理方法，传值给展示内容的页面
+    if ([self.liunianDelegate respondsToSelector:@selector(turnTheTitle:andNumber:)]) {
+        
+        [self.liunianDelegate turnTheTitle: dicForAllGong[strForGong] andNumber:number];
+        
+    }
+   
+    
+    
+    for (int i = 0 ; i < 2; i++) {
+        
+        UIView *viewForLabel = [self viewWithTag:i + kTagForGong];
+        
+        if ([strForSma isEqualToString:@"综合"]) {
+            
+            strForGong = @"命宫";
+            
+            UILabel *labelForZM = (UILabel *)[self viewWithTag:kTagForFirst + i];
+            labelForZM.text = _arrForZM[i];
+   
+        }else{
+        
+            UILabel *labelForZM = (UILabel *)[self viewWithTag:kTagForFirst + i];
+            labelForZM.text = @"";
+        }
+        
+        NSArray *arrForGong = dicForAllGong[strForGong];
+        
+        NSString *strForGong123 = arrForGong[i];
+        
+        NSArray *arrForSiGong1 = _dicForAllStarandG[strForGong123];
+        
+        NSDictionary *dicForStar = arrForSiGong1[0];
+        NSArray *arrForStar = dicForStar[@"星"];
+        
+        NSDictionary *dicForDaxian = arrForSiGong1[1];
+       // NSDictionary *dicForChangsheng = arrForSiGong1[2];
+        NSDictionary *dicForBoshi = arrForSiGong1[3];
+        NSDictionary *dicForShengxiao = arrForSiGong1[4];
+       // NSDictionary *dicForXiaoxian = arrForSiGong1[5];
+        NSDictionary *dicForTianpanG = arrForSiGong1[6];
+        //宫
+        UILabel *labelForGong = (UILabel *)[self viewWithTag:i + kTagForLabel];
+        labelForGong.text = [NSString stringWithFormat:@"小限%@",strForGong123];
+        
+        //大限
+        UILabel *labelForDaxian = (UILabel *)[self viewWithTag:i + kTagForDaxian];
+        labelForDaxian.text = dicForDaxian[@"大限"];
+        
+        //天盘宫
+        UILabel *labelForTianpanG = (UILabel *)[self viewWithTag:i + kTagForMiddleG];
+        labelForTianpanG.text = dicForTianpanG[strForGong123];
+        
+        //小限
+//        UILabel *labelForXiaoxian = (UILabel *)[self viewWithTag:i + kTagForXiaoxian];
+//        labelForXiaoxian.text = dicForXiaoxian[@"小限"];
+        
+        //长生
+//        UILabel *labelForChangsheng = (UILabel *)[self viewWithTag:i + kTagForChangsheng];
+//        labelForChangsheng.text = dicForChangsheng[@"长生"];
+        
+        //博士
+        UILabel *labelForBoshi = (UILabel *)[self viewWithTag:i + kTagForBoshi];
+        labelForBoshi.text = dicForBoshi[@"博士"];
+        
+        //生肖
+        UILabel *labelForShengxiao = (UILabel *)[self viewWithTag:i + kTagForShengxiao];
+        labelForShengxiao.text = dicForShengxiao[@"生肖"];
+        
+        //星
+        for (int j = 0; j < arrForStar.count; j++) {
+            
+            if (j > 4) {
+                
+                
+            }else{
+                
+                UILabel *labelForStar = [[UILabel alloc]initWithFrame:CGRectMake(widthForGong - xForStar - widthForStar - j * (widthForStar + pageForStar), yForStar, widthForStar, heightForStar)];
+                labelForStar.attributedText = arrForStar[j];
+                //labelForStar.textColor = [UIColor blackColor];
+                labelForStar.numberOfLines = 0;
+                //  labelForStar.backgroundColor = [UIColor orangeColor];
+                labelForStar.font = _otherFont;
+                [viewForLabel addSubview:labelForStar];
+                
+                [_arrForLabelAllStar addObject:labelForStar];
+
+                
+      
+                
+            }
+
+        }
+ 
+    }
+
+}
+
+
+//获得设备型号
+- (NSString *)getCurrentDeviceModel{
+    int mib[2];
+    size_t len;
+    char *machine;
+    
+    mib[0] = CTL_HW;
+    mib[1] = HW_MACHINE;
+    sysctl(mib, 2, NULL, &len, NULL, 0);
+    machine = malloc(len);
+    sysctl(mib, 2, machine, &len, NULL, 0);
+    
+    NSString *platform = [NSString stringWithCString:machine encoding:NSASCIIStringEncoding];
+    free(machine);
+    
+    if ([platform isEqualToString:@"iPhone1,1"]) return @"iPhone 2G";
+    if ([platform isEqualToString:@"iPhone1,2"]) return @"iPhone 3G";
+    if ([platform isEqualToString:@"iPhone2,1"]) return @"iPhone 3GS";
+    if ([platform isEqualToString:@"iPhone3,1"]) return @"iPhone 4";
+    if ([platform isEqualToString:@"iPhone3,2"]) return @"iPhone 4";
+    if ([platform isEqualToString:@"iPhone3,3"]) return @"iPhone 4";
+    if ([platform isEqualToString:@"iPhone4,1"]) return @"iPhone 4S";
+    if ([platform isEqualToString:@"iPhone5,1"]) return @"iPhone 5";
+    if ([platform isEqualToString:@"iPhone5,2"]) return @"iPhone 5";
+    if ([platform isEqualToString:@"iPhone5,3"]) return @"iPhone 5c";
+    if ([platform isEqualToString:@"iPhone5,4"]) return @"iPhone 5c";
+    if ([platform isEqualToString:@"iPhone6,1"]) return @"iPhone 5s";
+    if ([platform isEqualToString:@"iPhone6,2"]) return @"iPhone 5s";
+    if ([platform isEqualToString:@"iPhone7,1"]) return @"iPhone 6 Plus";
+    if ([platform isEqualToString:@"iPhone7,2"]) return @"iPhone 6";
+    
+    if ([platform isEqualToString:@"iPod1,1"])   return @"iPod Touch 1G";
+    if ([platform isEqualToString:@"iPod2,1"])   return @"iPod Touch 2G";
+    if ([platform isEqualToString:@"iPod3,1"])   return @"iPod Touch 3G";
+    if ([platform isEqualToString:@"iPod4,1"])   return @"iPod Touch 4G";
+    if ([platform isEqualToString:@"iPod5,1"])   return @"iPod Touch 5G";
+    
+    if ([platform isEqualToString:@"iPad1,1"])   return @"iPad 1G";
+    
+    if ([platform isEqualToString:@"iPad2,1"])   return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,2"])   return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,3"])   return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,4"])   return @"iPad 2";
+    if ([platform isEqualToString:@"iPad2,5"])   return @"iPad Mini 1G";
+    if ([platform isEqualToString:@"iPad2,6"])   return @"iPad Mini 1G";
+    if ([platform isEqualToString:@"iPad2,7"])   return @"iPad Mini 1G";
+    
+    if ([platform isEqualToString:@"iPad3,1"])   return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,2"])   return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,3"])   return @"iPad 3";
+    if ([platform isEqualToString:@"iPad3,4"])   return @"iPad 4";
+    if ([platform isEqualToString:@"iPad3,5"])   return @"iPad 4";
+    if ([platform isEqualToString:@"iPad3,6"])   return @"iPad 4";
+    
+    if ([platform isEqualToString:@"iPad4,1"])   return @"iPad Air";
+    if ([platform isEqualToString:@"iPad4,2"])   return @"iPad Air";
+    if ([platform isEqualToString:@"iPad4,3"])   return @"iPad Air";
+    if ([platform isEqualToString:@"iPad4,4"])   return @"iPad Mini 2G";
+    if ([platform isEqualToString:@"iPad4,5"])   return @"iPad Mini 2G";
+    if ([platform isEqualToString:@"iPad4,6"])   return @"iPad Mini 2G";
+    
+    if ([platform isEqualToString:@"i386"])      return @"iPhone Simulator";
+    if ([platform isEqualToString:@"x86_64"])    return @"iPhone Simulator";
+    return platform;
+}
+
+
+
+@end

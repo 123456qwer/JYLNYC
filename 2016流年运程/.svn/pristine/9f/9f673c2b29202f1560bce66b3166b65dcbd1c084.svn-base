@@ -1,0 +1,394 @@
+//
+//  ViewController.m
+//  LiuNianYunCheng
+//
+//  Created by 吴冬 on 15/7/10.
+//  Copyright (c) 2015年 玄机天地. All rights reserved.
+//
+
+#import "ViewController.h"
+#import "ChineseZodiacHomeViewController.h"
+#import "AboutUsViewController.h"
+#import "ZiweijiangtangView.h"
+#import "textVCViewController.h"
+#import "PeopleModel.h"
+#import "SqliteForPeople.h"
+#import "SuanxingTool.h"
+#import "DajiangtangViewController.h"
+#import "AboutUsViewController.h"
+#import <AdSupport/AdSupport.h>
+#import "CalculateRightWrong.h"
+
+
+
+#define xForDajiangtang  134 / 640.0 * kScreenWidth
+#define widthForDajiangtang  375 / 640.0 * kScreenWidth
+#define heightForDajiangtang  70 / 1136.0 * kScreenHeight
+#define xForTable  37 / 640.0 * kScreenWidth
+#define widthForTable  566 / 640.0 * kScreenWidth
+#define heightForTabel  (5 * 83 + 4 * 19) / 1136.0 * kScreenHeight
+
+#define widthForSliderView 465 / 750.0 * kScreenWidth
+
+
+
+
+@interface ViewController ()
+{
+    UIImageView  *_dajiangtangLabel;
+    HomePageView *_homePage;
+    ZiweijiangtangView *_ziweijiangtangView;
+    SliderViewForPerson *_sliderViewForPerson;
+    BOOL _isHiddenSliderView;
+    
+    NSDictionary *_dicForHomeAndPan;  //数据
+    NSDictionary *_dicForYiji;
+    
+    
+}
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    NSString *adId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    NSLog(@"%@",adId);
+    //989B414E-F6ED-4567-AC40-C2B0E169510A
+    
+    NSUserDefaults *defalut = [NSUserDefaults standardUserDefaults];
+    
+    if (![defalut objectForKey:@"张三"]) {
+        
+        
+        [defalut setBool:YES forKey:@"张三"];
+        [defalut setBool:YES forKey:@"1992年09月08日17时"];
+    }
+
+    
+    //算宜忌
+    CalculateRightWrong *cal = [[CalculateRightWrong alloc]init];
+    
+    _dicForYiji = [cal suanYiji];
+
+    /**
+     *  隐藏bar
+     */
+    [self.navigationController setNavigationBarHidden:YES];
+
+   
+    
+    //设置UI
+    [self setUI];
+    
+    //今天日期，阴历N
+    [self actionForToady];
+
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+   
+    [self actionForViewAnimate:YES];
+ 
+}
+
+#pragma mark HomePageView代理方法
+/**
+ *  代理方法，流年按钮
+ */
+- (void)clickXiaoxianLiulian
+{
+    [self actionForViewAnimate:YES];
+    
+    textVCViewController *textVC = [[textVCViewController alloc]init];
+    
+    
+    [textVC setValuesForKeysWithDictionary:_dicForHomeAndPan];
+    
+    
+    [self.navigationController pushViewController:textVC animated:YES];
+
+}
+
+/**
+ *  代理方法，生肖按钮
+ */
+- (void)clickShengxiao
+{
+    [self actionForViewAnimate:YES];
+    
+    ChineseZodiacHomeViewController *shengxiaoVC = [[ChineseZodiacHomeViewController alloc]init];
+    [self.navigationController pushViewController:shengxiaoVC animated:YES];
+    
+}
+
+/**
+ *  代理方法，大讲堂按钮
+ */
+- (void)clickDajiangtang
+{
+    
+    NSLog(@"大讲堂");
+    DajiangtangViewController *vcForDajiangtang = [[DajiangtangViewController alloc]init];
+    [self.navigationController pushViewController:vcForDajiangtang animated:YES];
+  
+}
+
+
+/**
+ *  关于我们
+ */
+- (void)pushAboutUs
+{
+    AboutUsViewController *vc = [[AboutUsViewController alloc]init];
+    
+    [self actionForViewAnimate:YES];
+    
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+//侧栏按钮方法
+- (void)clickSliderView
+{
+   
+    [self actionForViewAnimate:_isHiddenSliderView];
+}
+
+#pragma mark SliderViewForPerson代理方法
+/**
+ *  弹出增加用户的视图
+ */
+- (void)pushForAddPeople
+{
+    //弹出SliderView
+    [self actionForViewAnimate:YES];
+
+    
+    AddPeopleViewController *addPVC = [[AddPeopleViewController alloc]init];
+    
+    //签署协议，当用户选择完成后讲存储的数据返还给主页
+    addPVC.addDelegate = self;
+    
+    [self.navigationController pushViewController:addPVC animated:YES];
+
+}
+
+/**
+ *   选择之前已有的用户
+ */
+- (void)selectedForBeforePeople:(NSDictionary *)peopleDic
+{
+   
+    _dicForHomeAndPan = peopleDic;
+    
+    //赋值UILabel
+    [self actionForLabel:peopleDic];
+    
+    NSLog(@"把之前储存的数据传送过来");
+
+}
+
+
+#pragma mark ADDPeopleViewController代理方法
+//通过这个方法把数据传递给主页面，之后Push textVC
+- (void)changeHomeAndPan:(NSDictionary *)dicForHomeAndPan
+{
+ 
+   //存入数据
+    SqliteForPeople *_sqliteForPeople = [[SqliteForPeople alloc]init];
+    
+    [_sqliteForPeople insertRecordIntoTableName:@"savePeopleData"
+                                           name:@"name"   nameValue:dicForHomeAndPan[@"name"]
+                                         yangli:@"yangli" yangliValue:dicForHomeAndPan[@"yangli"]
+                                         wuxing:@"wuxing" wuxingValue:dicForHomeAndPan[@"wuxing"]
+                                           geju:@"geju"   gejuValue:dicForHomeAndPan[@"geju"]
+                                       shuxiang:@"shuxiang" shuxiangValue:dicForHomeAndPan[@"shuxiang"]
+                             ageForHomePage:@"ageForHomePage"ageForHomePageValue:dicForHomeAndPan[@"ageForHomePage"]
+                                       yearsNow:@"yearsNow" yearsNowValue:dicForHomeAndPan[@"yearsNow"]
+                                       monthNow:@"monthNow" monthNowValue:dicForHomeAndPan[@"monthNow"]
+                                         dayNow:@"dayNow" dayNowValue:dicForHomeAndPan[@"dayNow"]
+                                       hoursNow:@"hoursNow" hoursNowValue:dicForHomeAndPan[@"hoursNow"]
+                                          hours:@"hours" hoursValue:dicForHomeAndPan[@"hours"]
+                                            day:@"day" dayValue:dicForHomeAndPan[@"day"]
+                                          month:@"month" monthValue:dicForHomeAndPan[@"month"]
+                                       yinliSTR:@"yinliSTR" yinliSTRValue:dicForHomeAndPan[@"yinliSTR"]
+                                       dizhiSTR:@"dizhiSTR" dizhiSTRValue:dicForHomeAndPan[@"dizhiSTR"]
+                                        tiangan:@"tiangan" tianganValue:dicForHomeAndPan[@"tiangan"]
+                                        yinyang:@"yinyang" yinyangValue:dicForHomeAndPan[@"yinyang"]
+                                            age:@"age" ageValue:dicForHomeAndPan[@"age"]];
+
+    
+    _dicForHomeAndPan = dicForHomeAndPan;
+    
+    [self actionForLabel:dicForHomeAndPan];
+    
+    [_sliderViewForPerson.dataForPeople addObject:dicForHomeAndPan];
+    
+    [_sliderViewForPerson.tableViewForPeople reloadData];
+   
+}
+
+
+
+#pragma mark 私有方法
+//隐藏View
+- (void)actionForViewAnimate:(BOOL )isHidden
+{
+    if (isHidden) {
+        
+        _isHiddenSliderView = NO;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            
+            _homePage.origin = CGPointMake(0, 0);
+            _sliderViewForPerson.origin = CGPointMake(-widthForSliderView , 0);
+            _ziweijiangtangView.origin = CGPointMake(xForTable, _ziweijiangtangView.origin.y);
+            _dajiangtangLabel.origin = CGPointMake(xForDajiangtang, _dajiangtangLabel.origin.y);
+        } completion:^(BOOL finished) {
+            
+            
+            
+        }];
+        
+        _homePage.dajiangtang.userInteractionEnabled = YES;
+        _homePage.xiaoxianliunian.userInteractionEnabled = YES;
+        _homePage.shengxiaodizhi.userInteractionEnabled = YES;
+        
+        
+    }else{
+        
+        _isHiddenSliderView = YES;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            
+            _homePage.origin = CGPointMake(widthForSliderView, 0);
+            _sliderViewForPerson.origin = CGPointMake(0, 0);
+            _ziweijiangtangView.origin = CGPointMake(xForTable + widthForSliderView, _ziweijiangtangView.origin.y);
+            _dajiangtangLabel.origin = CGPointMake(xForDajiangtang + widthForSliderView, _dajiangtangLabel.origin.y);
+            
+        } completion:^(BOOL finished) {
+            
+            
+            
+        }];
+        
+        _homePage.dajiangtang.userInteractionEnabled = NO;
+        _homePage.xiaoxianliunian.userInteractionEnabled = NO;
+        _homePage.shengxiaodizhi.userInteractionEnabled = NO;
+        
+    }
+
+
+}
+
+/**
+ *  今日label
+ */
+- (void)actionForToady
+{
+
+    //今天的日子
+    NSDate *nowDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    NSDateFormatter *nowDateFormatter = [[NSDateFormatter alloc]init];
+    [nowDateFormatter setDateFormat:@"yyyy年MM月dd日HH:mm:ss"];
+    NSString *dada = [nowDateFormatter stringFromDate:nowDate];
+    
+    NSInteger year = [[dada substringWithRange:NSMakeRange(0, 4)] integerValue];
+    NSInteger month = [[dada substringWithRange:NSMakeRange(5, 2)] integerValue];
+    NSInteger day = [[dada substringWithRange:NSMakeRange(8, 2)] integerValue];
+    NSInteger hours = [[dada substringWithRange:NSMakeRange(11, 2)] integerValue];
+
+    SuanxingTool *tool = [[SuanxingTool alloc]init];
+        
+    _homePage.todayLabel.text = [tool turnActionWithYear:year andMonth:month andDay:day andHours:hours];
+    _homePage.wrongLabel.text = _dicForYiji[@"忌"];
+    _homePage.rightLabel.text = _dicForYiji[@"宜"];
+    
+}
+
+//给UI的label重新赋值
+- (void)actionForLabel:(NSDictionary *)dicForHomeAndPan
+{
+    PeopleModel *model = [[PeopleModel alloc ]init];
+    [model setValuesForKeysWithDictionary:dicForHomeAndPan];
+    _homePage.nameLabel.text = model.name;
+    _homePage.ageLabel.text = model.ageForHomePage;
+    _homePage.yangliLabel.text = model.yangli;
+    _homePage.wuxingLabel.text = model.wuxing;
+    _homePage.gejuLabel.text = model.geju;
+    _homePage.shengxiaoLabel.text = model.shuxiang;
+    
+
+}
+
+
+
+
+
+/**
+ *  设置UI
+ */
+- (void)setUI
+{
+    
+    _homePage = [[HomePageView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight)];
+    _homePage.homeDelegate = self;
+    [self.view addSubview:_homePage];
+    
+
+    
+    _sliderViewForPerson = [[SliderViewForPerson alloc]initWithFrame:CGRectMake(0, 0, widthForSliderView, kScreenHeight)];
+    _sliderViewForPerson.origin = CGPointMake(-widthForSliderView, 0);
+    _sliderViewForPerson.sliderDelegateForP = self;
+    [self.view addSubview:_sliderViewForPerson];
+    
+    NSDictionary *dicForP = _sliderViewForPerson.dataForPeople[0];
+    //第一次进入赋值
+    [self actionForLabel:dicForP];
+    
+    _dicForHomeAndPan = dicForP;
+   
+    
+    //添加右划手势
+    UISwipeGestureRecognizer *gestureRight = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(changeViewRight)];
+    gestureRight.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:gestureRight];
+    
+    //添加左划手势
+    UISwipeGestureRecognizer *gestureLeft = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(changeViewLeft)];
+    gestureLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:gestureLeft];
+    
+}
+
+
+
+/**
+ *  左划
+ */
+- (void)changeViewLeft
+{
+
+    [self actionForViewAnimate:YES];
+
+}
+
+/**
+ *  右划
+ */
+- (void)changeViewRight
+{
+  
+    [self actionForViewAnimate:NO];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end

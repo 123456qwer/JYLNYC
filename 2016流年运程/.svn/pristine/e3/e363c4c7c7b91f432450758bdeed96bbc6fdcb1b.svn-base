@@ -1,0 +1,192 @@
+//
+//  YincangTableViewCell.m
+//  cell+block
+//
+//  Created by mac on 15/6/29.
+//  Copyright (c) 2015年 金源互动. All rights reserved.
+//
+
+#import "YincangTableViewCell.h"
+
+#define shadowColorForText [UIColor colorWithRed:177 / 255.0 green:137 / 255.0 blue:122 / 255.0 alpha:0.5].CGColor
+
+@implementation YincangTableViewCell
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+
+-(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
+
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    
+    if (self) {
+        _fontSize = 15;
+        if (kScreenHeight == iPhone4S) {
+            _fontSize = 13;
+        }else if(kScreenHeight == iPhone5S){
+            _fontSize = 14;
+        }else{
+            _fontSize = 15;
+        }
+        self.backgroundColor = [UIColor clearColor];
+        self.userInteractionEnabled = NO;
+
+        _contextView = [[UIView alloc]initWithFrame:CGRectMake(10, 10, kScreenWidth - 20, 130 - 15)];
+        _contextView.hidden = YES;
+        _contextView.backgroundColor = [UIColor colorWithRed:251/255.0 green:245/255.0 blue:237/255.0 alpha:1.0];
+        _contextLbl = [[UILabel alloc]initWithFrame:CGRectMake(40, 40, kScreenWidth - 20, 300 - 20)];
+        _contextLbl.numberOfLines = 0;
+    
+        _zodicaImaView = [[UIImageView alloc]initWithFrame:CGRectMake(15, 15, 81, 81)];
+
+        _zodicaLbl = [[UILabel alloc]initWithFrame:CGRectMake(_zodicaImaView.right + 13, 19, 60, 20)];
+        _zodicaLbl.textColor = [UIColor colorWithRed:139/255.0 green:98/255.0 blue:82/255.0 alpha:1.0   ];
+        
+        _nianfengLbl = [[UILabel alloc]initWithFrame:CGRectMake(_zodicaImaView.right + 13, 53, 35, 20)];
+        _nianfengLbl.textColor = [UIColor colorWithRed:201/255.0 green:33/255.0 blue:33/255.0 alpha:1.0];
+        _nianfengLbl.text = @"年份:  ";
+        _nianfengLbl.font = [UIFont systemFontOfSize:_fontSize];
+
+        
+        _yearLbl = [[UILabel alloc]initWithFrame:CGRectMake(_nianfengLbl.right,53,_contextView.width/2,_zodicaImaView.height - 43.5)];
+        _yearLbl.numberOfLines = 0;
+        _yearLbl.font = [UIFont systemFontOfSize:_fontSize];
+        _yearLbl.textColor = [UIColor colorWithRed:201/255.0 green:33/255.0 blue:33/255.0 alpha:1.0];
+     
+        
+        _liuyuejixunLbl = [[UILabel alloc]initWithFrame:CGRectMake(10, 11, _contextView.width - 20, _contextView.height -22)];
+        _liuyuejixunLbl.numberOfLines = 0;
+        _liuyuejixunLbl.textColor = [UIColor colorWithRed:201/255.0 green:33/255.0 blue:33/255.0 alpha:1.0];
+        _liuyuejixunLbl.font = [UIFont systemFontOfSize:_fontSize];
+        [self addSubview:_contextView];
+        [_contextView addSubview:_nianfengLbl];
+        [_contextView addSubview:_zodicaLbl];
+        [_contextView addSubview:_yearLbl];
+        [_contextView addSubview:_zodicaImaView];
+        [_contextView addSubview:_liuyuejixunLbl];
+        [self addSubview:_contextLbl];
+    }
+    return self;
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+    
+    // Configure the view for the selected state
+}
+
+//生肖运程
+-(void)zodicaContentArray:(NSArray *)contentArray andImage:(UIImage *)image andIndexPath:(NSInteger)indenxPath andYearArray:(NSArray *)yearArray andZodicaStr:(NSString *)zodicaStr{
+    
+    if (indenxPath == 0) {
+        NSString * mstr =[NSString string];
+        for (int i = 0; i < yearArray.count; i++) {
+            NSString * str = yearArray[i];
+            mstr  = [mstr stringByAppendingString:[NSString stringWithFormat:@"%@年 ",str]];
+            _yearLbl.text = [NSString stringWithFormat:@"%@",mstr];
+            
+            
+        }
+        _zodicaLbl.text = [NSString stringWithFormat:@"生肖%@",zodicaStr];
+        
+        _zodicaImaView.image = image;
+        _zodicaImaView.layer.shadowOpacity = 1;
+        _zodicaImaView.layer.shadowOffset = CGSizeMake(0, 2);
+        _zodicaImaView.layer.shadowColor = shadowColorForText;
+        
+        _contextView.layer.shadowOpacity = 1;
+        _contextView.layer.shadowOffset = CGSizeMake(0, 2);
+        _contextView.layer.shadowColor = shadowColorForText;
+    }else{
+        //获得当前cell高度
+        
+        //文本赋值
+
+        NSMutableString *responseString = [NSMutableString stringWithString:contentArray[indenxPath -1]];
+        
+        NSString *strUrl = [responseString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        _contextLbl.text = strUrl;
+        
+        [self toCalculateFrame:_contextLbl.text andControl:_contextLbl];
+
+
+    }
+  
+}
+
+//六十甲子
+- (void)liushiContentArray:(NSArray *)contentArray andIndexPath:(NSInteger) indenxPath{
+    
+    //文本赋值
+    NSMutableString *responseString = [NSMutableString stringWithString:contentArray[indenxPath]];
+    
+    NSString *strUrl = [responseString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+    _contextLbl.text = strUrl;
+    
+    [self toCalculateFrame:_contextLbl.text andControl:_contextLbl];
+}
+
+
+//流月
+- (void)liuyueContentDict:(NSDictionary *)contentDict andKeyArrar:(NSArray *)kerArray  andIndexPath:(NSInteger) indenxPath{
+    if (indenxPath == 0) {
+        NSNumber *  max = [kerArray valueForKeyPath:@"@max.floatValue"];
+        
+        NSMutableString *responseString = [NSMutableString stringWithString:contentDict[[max stringValue]]];
+        
+        NSString *strUrl = [responseString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        
+        _liuyuejixunLbl.text = strUrl;
+        
+        NSDictionary *attribute = @{NSFontAttributeName:[UIFont systemFontOfSize:_fontSize]};
+        CGSize tempSize = [_liuyuejixunLbl.text boundingRectWithSize:CGSizeMake(_contextView.width -20,_contextView.height) options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+        _liuyuejixunLbl.font = [UIFont systemFontOfSize:_fontSize];
+        [_liuyuejixunLbl setFrame:CGRectMake(10, _contextView.height/2- tempSize.height/2,tempSize.width,tempSize.height)];
+        
+        _contextView.layer.shadowOpacity = 1;
+        _contextView.layer.shadowOffset = CGSizeMake(0, 2);
+        _contextView.layer.shadowColor = shadowColorForText;
+        
+    }else{
+       
+        
+        //文本赋值
+        NSMutableString *responseString = [NSMutableString stringWithString:contentDict[kerArray[indenxPath -1]]];
+        
+        NSString *strUrl = [responseString stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        NSArray *array = [strUrl componentsSeparatedByString:@":"]; //从字符A中分隔成2个元素的数组
+        
+        _contextLbl.text = array[1];
+        
+        [self toCalculateFrame:_contextLbl.text andControl:_contextLbl];
+        
+    }
+}
+
+//算高度
+-(void)toCalculateFrame:(NSString * ) contentStr andControl:(UILabel *) control{
+    CGRect frame = [self frame];
+
+    UIFont *font = [UIFont systemFontOfSize:_fontSize];
+    NSMutableAttributedString *mutableString = [[NSMutableAttributedString alloc]initWithString:contentStr];
+    NSMutableParagraphStyle *mutableStyle = [[NSMutableParagraphStyle alloc]init];
+    [mutableStyle setLineSpacing:10.f];
+    [mutableString addAttribute:NSParagraphStyleAttributeName value:mutableStyle range:NSMakeRange(0, [contentStr length])];
+    
+    NSDictionary* dic = @{NSFontAttributeName:font, NSParagraphStyleAttributeName:mutableStyle};
+    
+    CGSize size = [contentStr boundingRectWithSize:CGSizeMake(kScreenWidth - 24, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:dic context:nil].size;
+    control.frame = CGRectMake(12 , 10 , kScreenWidth - (12 * 2), size.height);
+    control.font = [UIFont systemFontOfSize:_fontSize];
+    
+
+    control.attributedText = mutableString;
+       frame.size.height = control.height +15;
+    self.frame = frame;
+    
+
+}
+
+@end

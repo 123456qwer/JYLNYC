@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466584763.682723"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1133"
+            endingLineNumber = "1133"
+            landmarkName = "-actionForLock"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466586184.349136"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1226"
+            endingLineNumber = "1226"
+            landmarkName = "-requestProductData:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466584831.364367"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1238"
+            endingLineNumber = "1238"
+            landmarkName = "-request:didFailWithError:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466585670.415141"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1244"
+            endingLineNumber = "1244"
+            landmarkName = "-requestDidFinish:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466585670.415141"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1249"
+            endingLineNumber = "1249"
+            landmarkName = "-paymentQueue:updatedTransactions:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LiuNianYunCheng/&#x7d2b;&#x8587;&#x6597;&#x6570;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/&#x89e3;&#x76d8;&#x63a7;&#x5236;&#x5668;/LiunianJPViewController.m"
+            timestampString = "466585670.415141"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1318"
+            endingLineNumber = "1318"
+            landmarkName = "-completeTransaction:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

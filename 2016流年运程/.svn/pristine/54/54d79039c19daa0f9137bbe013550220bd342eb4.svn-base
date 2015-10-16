@@ -1,0 +1,339 @@
+//
+//  DajiangtangViewController.m
+//  LiuNianYunCheng
+//
+//  Created by 吴冬 on 15/8/20.
+//  Copyright (c) 2015年 玄机天地. All rights reserved.
+//
+
+#import "DajiangtangViewController.h"
+#import "ZijiangTableViewCell.h"
+
+
+#define yForTitle 128 / 1334.0 * kScreenHeight
+#define heightForCell 88 / 1334.0 * kScreenHeight
+
+#define yForText  28 / 1334.0 * kScreenHeight
+#define xForText  30 / 750.0 * kScreenWidth
+
+#define widthForBtn 223 / 750.0 * kScreenWidth
+#define heightForBtn 88 / 1334.0 * kScreenHeight
+#define yFotBtn (128 / 2.0 - 88 / 2.0) / 1334.0 * kScreenHeight
+
+
+@interface DajiangtangViewController ()
+
+{
+   
+    UITableView *_tableViewForZijiang;
+    NSArray *_arrForTitle;
+    NSArray *_arrForText;
+    NSMutableArray *_arrForTextHeight;
+    BOOL _flag[20];
+
+}
+
+@end
+
+@implementation DajiangtangViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    _arrForTextHeight = [NSMutableArray array];
+    _arrForTitle = @[@"正星、辅星",@"副星、杂曜",@"吉星",@"煞星",@"四化星",@"本宫",@"对宫",@"三方四正",@"大限",@"格局",@"十四正曜",@"主曜、副曜",@"其他星曜"];
+    
+    
+    NSString *str1 = @"主导命运主要发展趋势的星曜称正星，指紫微、天机、太阳、武曲、天同、廉贞、天府、太阴、贪狼、巨门、天相、天梁、七杀、破军等，共十四颗。命无正星，即命宫中没有十四颗正星。辅助正星发挥作用和发展变化而起较大作用的星称为辅助星曜，指左辅、右弼、天魁、天钺、文昌、文曲、禄存、天马、擎羊、陀罗、火星、铃星、天空、地劫、化禄、化权、化科、化忌等十八颗星曜。以上正星和辅星均属甲级星，共三十二颗。";
+    NSString *str2 = @"我们把乙级星称作副星，把丙级以下的星曜称为杂曜。";
+    NSString *str3 = @"指有利于人的命运、福禄吉昌之星。一般称左辅右弼、天魁、天钺、文昌、文曲等为六吉星。加禄存天马称为八吉星。正星中的紫微、天府、太阳、太阴、天相、天梁、天同、武曲等为正宗的富贵福禄之主吉星、正吉星。此外，四化星中的化禄、化科、化权亦为吉星。";
+    NSString *str4 = @"对人的命运有破坏、抑制、衰亡、失落之星曜，统称为煞星。一般称四煞星为：擎羊、陀罗、火星、铃星。加上天空、地劫称为六煞星。";
+    NSString *str5 = @"指化禄、化权、化科、化忌等四颗星曜，又叫四化曜。是主星变好变坏的四种结果。四化星虽不是正星，但他们的作用很大，尤其是化忌星，其破坏作用并不亚于六煞星，往往加上六煞星并称为七煞星。";
+    NSString *str6 = @"指主事之宫。如看兄弟的事情，则以兄弟宫为主来看，所以兄弟宫就是你要论事时的本宫。若问父母情况，则以父母宫为本宫，等等。十二宫均可为本宫。";
+    NSString *str7 = @"指本宫对面的宫，就是地支六冲之宫，如子宫的对宫为午，丑宫的对宫为未。对宫的吉凶对本宫影响很大。";
+    NSString *str8 = @"指本宫的三合宫为三方，本宫的对冲宫为四正。三合宫和对冲宫合起来统称为三方四正。分析三方四正以确定本宫的强弱吉凶为斗数论命的重要一环，是人事命运分析的主线，考察人事吉凶的入手之处。";
+    NSString *str9 = @"人一生可分若干阶段，每十年为一单位，称为大限。大限是一生经历几个重要阶段的沉浮曲线，是十年吉凶情况的总括。";
+    NSString *str10 = @"就是群星组合在一起形成的一个群体结构、布局的意思。紫微斗数的格局多为本宫或与三方四正宫或左右夹宫的星曜之间搭配而成的一些规定的、合格的组合体、布局，分为吉格和凶格，是前人实践经验的结晶，对吉凶判断有很重要的指导意义。";
+    NSString *str11 = @"紫微星系：紫微、天机、太阳、武曲、天同、廉贞。\n天府星系：天府、太阴、贪狼、巨门、天相、天梁、七杀、破军。";
+    NSString *str12 =  @"文昌 文曲 左辅 右弼 天魁。天钺 禄存 天马 火星 铃星。擎羊 陀罗 地劫 地空 天刑。";
+    NSString *str13 = @"红鸾 天喜 天姚 蜚廉，破碎 阴煞 天月 旬空。\n台辅 封诰 孤辰 寡宿，龙池 凤阁 天伤 天使。\n天才 天寿 恩光 天贵，三台 八座 天哭 天虚。\n解神 天官 天福 天巫。";
+    
+    
+    _arrForText = @[str1,str2,str3,str4,str5,str6,str7,str8,str9,str10,str11,str12,str13];
+    
+//    for (int i = 0; i < 13; i++) {
+//        
+//        
+//       CGFloat heightForTextHeight = [self returnForTextHeight:_arrForText[i]];
+//        
+//        [_arrForTextHeight addObject:@(heightForTextHeight)];
+//        
+//        
+//    }
+ 
+    
+
+
+    
+    UIImageView *imageBG = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight)];
+    imageBG.image = [UIImage imageNamed:@"背景主页"];
+    [self.view addSubview:imageBG];
+    
+    UIView *viewForTitle = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, yForTitle)];
+    viewForTitle.backgroundColor = [UIColor colorWithRed:139 / 255.0 green:97 / 255.0 blue:82 / 255.0 alpha:1];
+    [self.view addSubview:viewForTitle];
+    
+    //创建紫讲
+    [self createZijiangTb];
+    
+    //返回按钮
+    UIButton *btnForBack = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnForBack.frame = CGRectMake(0, yFotBtn, widthForBtn, heightForBtn);
+    [btnForBack setImage:[UIImage imageNamed:@"返回按钮"] forState:UIControlStateNormal];
+    [btnForBack addTarget:self action:@selector(backAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btnForBack];
+}
+
+#pragma mark 私有方法
+
+//返回
+- (void)backAction:(UIButton *)sender
+{
+   
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+////算文本长度
+//- (CGFloat )returnForTextHeight:(NSString *)strForT
+//{
+//   
+//    NSDictionary *attribute = @{NSFontAttributeName:[UIFont systemFontOfSize:17]};
+//    
+//    CGSize tempSize = [strForT boundingRectWithSize:CGSizeMake(kScreenWidth - 2 * xForText,kScreenHeight) options:NSStringDrawingTruncatesLastVisibleLine|NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+//  
+//    return tempSize.height;
+//}
+
+
+//创建紫薇讲堂tb
+- (void)createZijiangTb
+{
+    
+    UILabel *labelForTitle = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, yForTitle)];
+    labelForTitle.text = @"紫薇大讲堂";
+    labelForTitle.textAlignment = NSTextAlignmentCenter;
+    labelForTitle.textColor = [UIColor whiteColor];
+    labelForTitle.font = [UIFont boldSystemFontOfSize:21];
+    [self.view addSubview:labelForTitle];
+    
+    _tableViewForZijiang = [[UITableView alloc]initWithFrame:CGRectMake(0, yForTitle, kScreenWidth, kScreenHeight - yForTitle) style:UITableViewStylePlain];
+    _tableViewForZijiang.delegate = self;
+    _tableViewForZijiang.dataSource = self;
+    _tableViewForZijiang.backgroundColor = [UIColor clearColor];
+    _tableViewForZijiang.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:_tableViewForZijiang];
+    [self setExtraCellLineHidden:_tableViewForZijiang];
+
+}
+
+
+//隐藏多余的tb
+-(void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    
+    view.backgroundColor = [UIColor clearColor];
+    
+    [tableView setTableFooterView:view];
+}
+
+#pragma mark tb代理方法
+- (NSInteger )tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+   
+    return 2;
+
+}
+
+- (NSInteger )numberOfSectionsInTableView:(UITableView *)tableView
+{
+ 
+    return _arrForTitle.count;
+  
+}
+
+- (CGFloat )tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    if (_flag[indexPath.section]) {
+        
+        
+        if (indexPath.row == 0) {
+            
+            return heightForCell;
+            
+        }else{
+            
+            return [_arrForTextHeight[indexPath.section] floatValue] + yForText * 2;
+        }
+        
+    }else{
+    
+        if (indexPath.row == 0) {
+            
+            return heightForCell;
+            
+        }else{
+            
+            return 0;
+        }
+        
+    }
+    
+    
+  
+    
+}
+
+//自适应高度
+- (void)returnForLabelStr:(UILabel *)label
+{
+  
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:label.text];;
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
+    
+    [paragraphStyle setLineSpacing:5];
+    
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, label.text.length)];
+    
+    
+    
+    label.attributedText = attributedString;
+    
+    //调节高度
+    
+    CGSize size = CGSizeMake(kScreenWidth - 2 * xForText, 500000);
+    
+    
+    
+   CGSize size123 = [label sizeThatFits:size];
+    
+    label.height = size123.height;
+
+    [_arrForTextHeight addObject:@(size123.height)];
+
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    static NSString *strForZijiang = @"strForZijiang";
+    ZijiangTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:strForZijiang];
+    if (!cell) {
+        
+        cell = [[ZijiangTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:strForZijiang];
+        
+    }
+    
+    
+    if (indexPath.row == 0) {
+        
+        cell.labelForTitle.text = _arrForTitle[indexPath.section];
+        cell.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.9];
+        cell.labelForText.text = @"";
+        cell.labelForText.hidden = NO;
+
+        if (_flag[indexPath.section]) {
+            
+            cell.imageForBtn.image = [UIImage imageNamed:@"下拉"];
+            
+        }else{
+        
+           
+            cell.imageForBtn.image = [UIImage imageNamed:@"上拉"];
+        }
+        
+        
+    }else{
+    
+        if (_flag[indexPath.section]) {
+            
+            cell.labelForText.hidden = NO;
+            
+        }else{
+        
+            cell.labelForText.hidden = YES;
+        
+        }
+        
+        if (indexPath.section >=11) {
+            
+            cell.labelForText.textAlignment = NSTextAlignmentCenter;
+        }else{
+        
+            cell.labelForText.textAlignment = NSTextAlignmentLeft;
+        }
+        
+        
+        
+       // cell.labelForText.height = [_arrForTextHeight[indexPath.section] floatValue];
+        cell.backgroundColor = [UIColor clearColor];
+        cell.labelForTitle.text = @"";
+        cell.labelForText.text = _arrForText[indexPath.section];
+        [self returnForLabelStr:cell.labelForText];
+        cell.imageForBtn.image = [UIImage imageNamed:@""];
+        
+    }
+    
+   
+    return cell;
+}
+
+//点击cell的方法
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    
+    
+    
+    for (int i = 0; i < _arrForTitle.count; i++) {
+        
+        if (i == indexPath.section) {
+            
+            
+        }else{
+        
+            _flag[i] = NO;
+
+        
+        }
+        
+        
+    }
+    
+    _flag[indexPath.section] = !_flag[indexPath.section];
+    
+       
+    [_tableViewForZijiang reloadData];
+    
+ 
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

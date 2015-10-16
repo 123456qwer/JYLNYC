@@ -1,0 +1,152 @@
+//
+//  AboutUsViewController.m
+//  fleetingFortune
+//
+//  Created by mac on 15/7/8.
+//  Copyright (c) 2015年 金源互动. All rights reserved.
+//
+
+#import "AboutUsViewController.h"
+#define HeightForSc kScreenHeight/1334.0
+#define widthForBtn 233 / 750.0 * kScreenWidth
+#define pageHeightBtn 20 / 1334.0 * kScreenHeight
+
+@interface AboutUsViewController ()
+
+@end
+
+@implementation AboutUsViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+    
+    //设置UI
+    [self setUI];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+//设置UI
+- (void)setUI{
+    
+    UIView * titleView = [[UIView alloc]initWithFrame:CGRectMake(0, 0,kScreenWidth ,128 /1334.0 * kScreenHeight)];
+    titleView.backgroundColor  = [UIColor colorWithRed:139 / 255.0 green:97 / 255.0 blue:82 / 255.0 alpha:1.000];
+    [self.view addSubview:titleView];
+    
+    //标题label
+    UILabel * titleLbl = [[UILabel alloc]initWithFrame:CGRectMake(0, titleView.height/2 - 128 /1334.0 * kScreenHeight/2 + pageHeightBtn, kScreenWidth, 128 /1334.0 * kScreenHeight)];
+    titleLbl.text = @"关于我们";
+    titleLbl.font = [UIFont boldSystemFontOfSize:22];
+    titleLbl.textColor = [UIColor whiteColor];
+    titleLbl.textAlignment = NSTextAlignmentCenter;
+    [titleView addSubview:titleLbl];
+    
+    
+    //返回按钮
+   UIButton * backButton  = [[UIButton alloc]initWithFrame:CGRectMake(0, titleView.height/2 - 88* HeightForSc/2 + pageHeightBtn, widthForBtn, 88 * HeightForSc)];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"lback.png"] forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backActuon:) forControlEvents:UIControlEventTouchUpInside];
+    [titleView addSubview:backButton];
+    
+    
+    //背景图片
+    UIImageView * backimageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, titleView.bottom, kScreenWidth, kScreenHeight - titleView.height)];
+    backimageView.image = [UIImage imageNamed:@"xinbeijing.png"];
+    [self.view addSubview:backimageView];
+    
+    
+    //logoImage
+    UIImageView * logoImageView = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth/2 - 105/2 ,71, 105, 100)];
+    logoImageView.image = [UIImage imageNamed:@"xuanji.png"];
+    [backimageView addSubview:logoImageView];
+    
+    
+    //关于我们Lbl
+    UILabel * jieshaoAboutUs = [[UILabel alloc]initWithFrame:CGRectMake(0,logoImageView.bottom +32, kScreenWidth, 20)];
+    jieshaoAboutUs.text = @"关于我们";
+    jieshaoAboutUs.textColor = [UIColor colorWithRed:112/255.0 green:20/255.0 blue:20/255.0 alpha:1.0];
+    jieshaoAboutUs.textAlignment = NSTextAlignmentCenter;
+    jieshaoAboutUs.font = [UIFont systemFontOfSize:20];
+    [backimageView addSubview:jieshaoAboutUs];
+    
+    
+    //介绍内容lbl
+    UILabel * contextLbl = [[UILabel alloc]initWithFrame:CGRectMake(30,jieshaoAboutUs.bottom + 30 , kScreenWidth - 60, 90)];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineSpacing = 5;// 字体的行间距
+    NSDictionary *attributes = @{
+                                 NSFontAttributeName:[UIFont systemFontOfSize:15],
+                                 NSParagraphStyleAttributeName:paragraphStyle
+                                 };
+    contextLbl.attributedText = [[NSAttributedString alloc] initWithString:@"“玄机天地”成立于2015年，是集合了命理学，风水学于一身的手机软件门户平台。我们致力于大造最专业，最亲民，最精确的命理风水手机软件。" attributes:attributes];
+    contextLbl.numberOfLines = 0;
+    contextLbl.textColor = [UIColor colorWithRed:30/255.0 green:30/255.0 blue:30/255.0 alpha:1];
+    [backimageView addSubview:contextLbl];
+
+    //玄机产品
+    UILabel * cpLbl = [[UILabel alloc]initWithFrame:CGRectMake(0,contextLbl.bottom + 35, kScreenWidth, 20)];
+    cpLbl.text = @"玄机产品";
+    cpLbl.textAlignment = NSTextAlignmentCenter;
+    cpLbl.textColor = [UIColor colorWithRed:112/255.0 green:20/255.0 blue:20/255.0 alpha:1.0];
+    cpLbl.font = [UIFont systemFontOfSize:20];
+    [backimageView addSubview:cpLbl];
+    
+    
+    
+//    CGFloat bili = kScreenWidth * 2/750.0;
+//    CGFloat btnWidth = 60 * bili;
+    //UIButton * cpBtn;
+//    for (int i = 0; i < 3; i++) {
+////        UIImageView * cpImageView = [[UIImageView alloc]initWithFrame:CGRectMake(55 * (i + 1) + i * imageWidth, cpLbl.bottom + 30, imageWidth, imageWidth)];
+////        cpImageView.backgroundColor = [UIColor yellowColor];
+////        [backimageView addSubview:cpImageView];
+//        
+//        if (i == 0) {
+//            cpBtn = [[UIButton alloc]initWithFrame:CGRectMake(55 * bili, cpLbl.bottom + 30*bili, btnWidth, btnWidth)];
+//            cpBtn.backgroundColor = [UIColor yellowColor];
+//
+//        }else{
+//            cpBtn = [[UIButton alloc]initWithFrame:CGRectMake(55 * bili + 43 * i * bili + btnWidth * i * bili,cpLbl.bottom + 30 * bili, btnWidth, btnWidth)];
+//            cpBtn.backgroundColor = [UIColor yellowColor];
+//        }
+//    
+//        [backimageView addSubview:cpBtn];
+//
+//    }
+    
+    backimageView.userInteractionEnabled = YES;
+    UIButton * guanyinqianBtn = [[UIButton  alloc] initWithFrame:CGRectMake(kScreenWidth/2 - 60/2, cpLbl.bottom + 20, 60, 60)];
+    
+    [guanyinqianBtn setImage:[UIImage imageNamed:@"guanyinqian"] forState:UIControlStateNormal];
+    [guanyinqianBtn addTarget: self action:@selector(guanyinqianClick:) forControlEvents:UIControlEventTouchUpInside];
+    [backimageView addSubview:guanyinqianBtn];
+    
+}
+//点击观音签按钮
+-(void)guanyinqianClick:(id)sender{
+    [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"https://appsto.re/cn/LTwi7.i"]];
+}
+//返回按钮
+- (void)backActuon:(UIButton *)sender{
+    
+    [self.navigationController popViewControllerAnimated:YES];
+
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end
